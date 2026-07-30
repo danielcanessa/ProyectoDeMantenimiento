@@ -1,5 +1,7 @@
 
-public class Calculator {
+package com.pswe03.patrones;
+
+class Calculator {
     public int calculate(String operation, int a, int b) {
         if ("sum".equals(operation)) {
             return a + b;

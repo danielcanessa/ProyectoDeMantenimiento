@@ -1,5 +1,7 @@
 
-public class Service {
+package com.pswe03.patrones;
+
+class Service {
     public void process() {
         System.out.println("Start process");
         // logic

@@ -1,0 +1,14 @@
+# Java compilado
+*.class
+
+# Gradle
+.gradle/
+build/
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+
+# Archivos del sistema operativo
+.DS_Store

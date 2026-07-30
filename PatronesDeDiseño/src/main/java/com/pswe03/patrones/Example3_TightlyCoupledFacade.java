@@ -1,5 +1,7 @@
 
-public class TravelSystem {
+package com.pswe03.patrones;
+
+class TravelSystem {
     public void book() {
         Flight flight = new Flight();
         Hotel hotel = new Hotel();

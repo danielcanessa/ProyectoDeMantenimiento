@@ -1,5 +1,7 @@
 
-public class Beverage {
+package com.pswe03.patrones;
+
+class Beverage {
     public void prepare() {
         boilWater();
         brew();

@@ -1,5 +1,7 @@
 
-public class TCPConnection {
+package com.pswe03.patrones;
+
+class TCPConnection {
     private String state;
 
     public void setState(String s) { state = s; }
