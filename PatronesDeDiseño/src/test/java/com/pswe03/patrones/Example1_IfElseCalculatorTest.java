@@ -1,6 +1,7 @@
 package com.pswe03.patrones;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.stream.Stream;
 
@@ -28,8 +29,10 @@ class Example1_IfElseCalculatorTest {
     }
 
     @Test
-    void returnsZeroForUnknownOrNullOperation() {
-        assertEquals(0, calculator.calculate("avg", 6, 3));
-        assertEquals(0, calculator.calculate(null, 6, 3));
+    void rejectsUnknownOrNullOperation() {
+        assertThrows(IllegalArgumentException.class,
+                () -> calculator.calculate("avg", 6, 3));
+        assertThrows(IllegalArgumentException.class,
+                () -> calculator.calculate(null, 6, 3));
     }
 }
