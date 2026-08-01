@@ -1,16 +1,57 @@
-
 package com.pswe03.patrones;
 
-class TCPConnection {
-    private String state;
+interface ConnectionState {
+    default void open(TCPConnection connection) {
+        // Invalid transition for this state.
+    }
 
-    public void setState(String s) { state = s; }
+    default void close(TCPConnection connection) {
+        // Invalid transition for this state.
+    }
+}
+
+class ClosedState implements ConnectionState {
+    @Override
+    public void open(TCPConnection connection) {
+        System.out.println("Opening connection...");
+        connection.changeState(new OpenState());
+    }
+}
+
+class OpenState implements ConnectionState {
+    @Override
+    public void close(TCPConnection connection) {
+        System.out.println("Closing connection...");
+        connection.changeState(new ClosedState());
+    }
+}
+
+class UnknownState implements ConnectionState {
+}
+
+class TCPConnection {
+    private ConnectionState state = new UnknownState();
+
+    // Se conserva para mantener compatibilidad con la API anterior basada en strings.
+    public void setState(String stateName) {
+        if ("CLOSED".equals(stateName)) {
+            changeState(new ClosedState());
+        } else if ("OPEN".equals(stateName)) {
+            changeState(new OpenState());
+        } else {
+            changeState(new UnknownState());
+        }
+    }
 
     public void open() {
-        if ("CLOSED".equals(state)) System.out.println("Opening connection...");
+        state.open(this);
     }
 
     public void close() {
-        if ("OPEN".equals(state)) System.out.println("Closing connection...");
+        state.close(this);
+    }
+
+    void changeState(ConnectionState state) {
+        this.state = state;
     }
 }

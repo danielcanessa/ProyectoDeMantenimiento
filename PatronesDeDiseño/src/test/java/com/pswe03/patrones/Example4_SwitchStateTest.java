@@ -27,35 +27,43 @@ class Example4_SwitchStateTest {
     }
 
     @Test
-    void opensOnlyWhenConnectionIsClosed() {
+    void openingClosedConnectionTransitionsItToOpen() {
         TCPConnection connection = new TCPConnection();
         connection.setState("CLOSED");
 
+        connection.open();
         connection.open();
 
         assertEquals("Opening connection..." + System.lineSeparator(), output());
     }
 
     @Test
-    void closesOnlyWhenConnectionIsOpen() {
+    void closingOpenConnectionTransitionsItToClosed() {
         TCPConnection connection = new TCPConnection();
         connection.setState("OPEN");
 
+        connection.close();
         connection.close();
 
         assertEquals("Closing connection..." + System.lineSeparator(), output());
     }
 
     @Test
-    void ignoresInvalidTransitions() {
+    void followsValidStateTransitionsAndIgnoresInvalidOnes() {
         TCPConnection connection = new TCPConnection();
 
-        connection.setState("OPEN");
-        connection.open();
         connection.setState("CLOSED");
         connection.close();
+        connection.open();
+        connection.close();
+        connection.close();
 
-        assertEquals("", output());
+        assertEquals(
+                String.join(
+                        System.lineSeparator(),
+                        "Opening connection...",
+                        "Closing connection...") + System.lineSeparator(),
+                output());
     }
 
     private String output() {

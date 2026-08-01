@@ -17,7 +17,7 @@ Refactorizar cinco archivos Java aplicando correctamente el patrón de diseño a
 | `Example1_IfElseCalculator.java` | Strategy | Selección de operaciones mediante condicionales. | Aplicado: cada operación está encapsulada en una estrategia y las entradas inválidas producen una excepción explícita. |
 | `Example2_RepeatedFunctionalityLogger.java` | Decorator | Funcionalidad de registro repetida alrededor de operaciones. | Aplicado: el logging se agrega por composición sin mezclarlo con la lógica principal del servicio. |
 | `Example3_TightlyCoupledFacade.java` | Facade | Coordinación directa de varios subsistemas de viaje. | Aplicado: una fachada ofrece una operación única y oculta la coordinación de las reservas. |
-| `Example4_SwitchState.java` | State | Comportamiento condicionado por un estado textual. | Pendiente de refactorización. |
+| `Example4_SwitchState.java` | State | Comportamiento condicionado por un estado textual. | Aplicado: cada estado encapsula las operaciones permitidas y controla la siguiente transición. |
 | `Example5_TemplateMethodLike.java` | Template Method | Secuencia fija de pasos para preparar una bebida. | Pendiente de refactorización. |
 
 ### Ejemplo 1 - Strategy
@@ -40,6 +40,12 @@ La composición `new LoggingServiceDecorator(new BasicService())` permite activa
 
 El constructor sin argumentos conserva la API original `new TravelSystem().book()`. Un segundo constructor permite recibir los subsistemas desde fuera, lo que reduce el acoplamiento y facilita verificar la coordinación de manera aislada sin obligar a modificar las referencias existentes.
 
+### Ejemplo 4 - State
+
+`TCPConnection` delega `open()` y `close()` en un objeto `ConnectionState`. `ClosedState` permite abrir la conexión y cambia el estado a `OpenState`; `OpenState` permite cerrarla y regresa a `ClosedState`. Las operaciones que no corresponden al estado actual se ignoran sin agregar condicionales a la conexión.
+
+La API existente se conserva: `setState(String)` funciona como adaptador entre los identificadores `OPEN` y `CLOSED` y los objetos de estado. Los valores desconocidos o nulos se representan con `UnknownState`, manteniendo el comportamiento anterior de no ejecutar ninguna operación.
+
 ## Pruebas unitarias de la Fase 1
 
 Los cinco ejemplos tienen pruebas unitarias escritas con JUnit 5. Estas pruebas documentan el comportamiento esperado y protegen cada refactorización contra regresiones.
@@ -51,7 +57,7 @@ Los cinco ejemplos tienen pruebas unitarias escritas con JUnit 5. Estas pruebas 
 | `Example1_IfElseCalculatorTest` | Suma, resta, multiplicación, división y rechazo mediante `IllegalArgumentException` de operaciones desconocidas o nulas. |
 | `Example2_RepeatedFunctionalityLoggerTest` | Delegación al servicio envuelto y mensajes de inicio y finalización de `process` y `validate`. |
 | `Example3_TightlyCoupledFacadeTest` | Compatibilidad de la API original y delegación de la fachada a vuelo, hotel y automóvil en el orden esperado. |
-| `Example4_SwitchStateTest` | Apertura en estado `CLOSED`, cierre en estado `OPEN` y transiciones inválidas. |
+| `Example4_SwitchStateTest` | Apertura, cierre, cambios automáticos de estado y transiciones inválidas. |
 | `Example5_TemplateMethodLikeTest` | Ejecución ordenada de los cuatro pasos de `prepare`. |
 
 La suite contiene **13 casos de prueba** en total.
