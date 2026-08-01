@@ -15,7 +15,7 @@ Refactorizar cinco archivos Java aplicando correctamente el patrón de diseño a
 | Archivo inicial | Patrón seleccionado | Problema principal | Estado o mejora lograda |
 | --- | --- | --- | --- |
 | `Example1_IfElseCalculator.java` | Strategy | Selección de operaciones mediante condicionales. | Aplicado: cada operación está encapsulada en una estrategia y las entradas inválidas producen una excepción explícita. |
-| `Example2_RepeatedFunctionalityLogger.java` | Decorator | Funcionalidad de registro repetida alrededor de operaciones. | Pendiente de refactorización. |
+| `Example2_RepeatedFunctionalityLogger.java` | Decorator | Funcionalidad de registro repetida alrededor de operaciones. | Aplicado: el logging se agrega por composición sin mezclarlo con la lógica principal del servicio. |
 | `Example3_TightlyCoupledFacade.java` | Facade | Coordinación directa de varios subsistemas de viaje. | Pendiente de refactorización. |
 | `Example4_SwitchState.java` | State | Comportamiento condicionado por un estado textual. | Pendiente de refactorización. |
 | `Example5_TemplateMethodLike.java` | Template Method | Secuencia fija de pasos para preparar una bebida. | Pendiente de refactorización. |
@@ -28,6 +28,12 @@ Las operaciones disponibles mantienen sus identificadores originales: `sum`, `su
 
 Siguiendo el principio Boy Scout (dejar el código un poco mejor de como se encontró), también se fortaleció el manejo de errores. Cuando el identificador de una operación es desconocido o nulo, `Calculator` lanza `IllegalArgumentException` en vez de devolver `0`. De esta manera, una entrada inválida no puede confundirse con un resultado legítimo y el problema se comunica inmediatamente al código que utiliza la calculadora.
 
+### Ejemplo 2 - Decorator
+
+`BasicService` contiene la lógica principal de `process` y `validate`. `LoggingServiceDecorator` implementa el mismo contrato `Service`, envuelve otro servicio y agrega los mensajes de inicio y finalización antes y después de delegar cada operación.
+
+La composición `new LoggingServiceDecorator(new BasicService())` permite activar el logging sin modificar `BasicService`. Además, el método `executeWithLogging` centraliza el comportamiento repetido y deja abierta la posibilidad de combinar el servicio con otros decoradores.
+
 ## Pruebas unitarias de la Fase 1
 
 Los cinco ejemplos tienen pruebas unitarias escritas con JUnit 5. Estas pruebas documentan el comportamiento esperado y protegen cada refactorización contra regresiones.
@@ -37,7 +43,7 @@ Los cinco ejemplos tienen pruebas unitarias escritas con JUnit 5. Estas pruebas 
 | Prueba | Casos documentados |
 | --- | --- |
 | `Example1_IfElseCalculatorTest` | Suma, resta, multiplicación, división y rechazo mediante `IllegalArgumentException` de operaciones desconocidas o nulas. |
-| `Example2_RepeatedFunctionalityLoggerTest` | Mensajes de inicio y finalización de `process` y `validate`. |
+| `Example2_RepeatedFunctionalityLoggerTest` | Delegación al servicio envuelto y mensajes de inicio y finalización de `process` y `validate`. |
 | `Example3_TightlyCoupledFacadeTest` | Reserva de vuelo, hotel y automóvil en el orden esperado. |
 | `Example4_SwitchStateTest` | Apertura en estado `CLOSED`, cierre en estado `OPEN` y transiciones inválidas. |
 | `Example5_TemplateMethodLikeTest` | Ejecución ordenada de los cuatro pasos de `prepare`. |

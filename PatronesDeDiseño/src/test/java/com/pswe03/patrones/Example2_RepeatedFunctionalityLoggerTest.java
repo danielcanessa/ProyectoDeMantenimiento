@@ -12,12 +12,15 @@ import org.junit.jupiter.api.Test;
 
 class Example2_RepeatedFunctionalityLoggerTest {
 
-    private final Service service = new Service();
     private final PrintStream originalOutput = System.out;
     private ByteArrayOutputStream capturedOutput;
+    private TrackingService basicService;
+    private Service service;
 
     @BeforeEach
     void captureOutput() {
+        basicService = new TrackingService();
+        service = new LoggingServiceDecorator(basicService);
         capturedOutput = new ByteArrayOutputStream();
         System.setOut(new PrintStream(capturedOutput));
     }
@@ -28,16 +31,18 @@ class Example2_RepeatedFunctionalityLoggerTest {
     }
 
     @Test
-    void processLogsStartAndEndMessages() {
+    void processDelegatesAndLogsStartAndEndMessages() {
         service.process();
 
+        assertEquals(1, basicService.processCalls);
         assertEquals(expectedOutput("Start process", "End process"), output());
     }
 
     @Test
-    void validateLogsStartAndEndMessages() {
+    void validateDelegatesAndLogsStartAndEndMessages() {
         service.validate();
 
+        assertEquals(1, basicService.validationCalls);
         assertEquals(expectedOutput("Start validate", "End validate"), output());
     }
 
@@ -47,5 +52,20 @@ class Example2_RepeatedFunctionalityLoggerTest {
 
     private String expectedOutput(String... lines) {
         return String.join(System.lineSeparator(), lines) + System.lineSeparator();
+    }
+
+    private static class TrackingService implements Service {
+        private int processCalls;
+        private int validationCalls;
+
+        @Override
+        public void process() {
+            processCalls++;
+        }
+
+        @Override
+        public void validate() {
+            validationCalls++;
+        }
     }
 }
