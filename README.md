@@ -18,7 +18,7 @@ Refactorizar cinco archivos Java aplicando correctamente el patrón de diseño a
 | `Example2_RepeatedFunctionalityLogger.java` | Decorator | Funcionalidad de registro repetida alrededor de operaciones. | Aplicado: el logging se agrega por composición sin mezclarlo con la lógica principal del servicio. |
 | `Example3_TightlyCoupledFacade.java` | Facade | Coordinación directa de varios subsistemas de viaje. | Aplicado: una fachada ofrece una operación única y oculta la coordinación de las reservas. |
 | `Example4_SwitchState.java` | State | Comportamiento condicionado por un estado textual. | Aplicado: cada estado encapsula las operaciones permitidas y controla la siguiente transición. |
-| `Example5_TemplateMethodLike.java` | Template Method | Secuencia fija de pasos para preparar una bebida. | Pendiente de refactorización. |
+| `Example5_TemplateMethodLike.java` | Template Method | Secuencia fija de pasos para preparar una bebida. | Aplicado: la plantilla fija el proceso y permite especializar solo los pasos variables. |
 
 ### Ejemplo 1 - Strategy
 
@@ -46,6 +46,12 @@ El constructor sin argumentos conserva la API original `new TravelSystem().book(
 
 La API existente se conserva: `setState(String)` funciona como adaptador entre los identificadores `OPEN` y `CLOSED` y los objetos de estado. Los valores desconocidos o nulos se representan con `UnknownState`, manteniendo el comportamiento anterior de no ejecutar ninguna operación.
 
+### Ejemplo 5 - Template Method
+
+`BeverageTemplate` define `prepare()` como el método plantilla final que ejecuta siempre la misma secuencia: hervir agua, preparar la bebida, servirla y agregar extras. Los pasos comunes permanecen en la plantilla, mientras `brew()` y `addExtras()` son operaciones abstractas que cada especialización debe implementar.
+
+`Beverage` conserva la API y el comportamiento originales mediante `new Beverage().prepare()`. Nuevos tipos de bebida pueden extender `BeverageTemplate` y personalizar los pasos variables sin duplicar ni alterar el algoritmo general.
+
 ## Pruebas unitarias de la Fase 1
 
 Los cinco ejemplos tienen pruebas unitarias escritas con JUnit 5. Estas pruebas documentan el comportamiento esperado y protegen cada refactorización contra regresiones.
@@ -58,9 +64,9 @@ Los cinco ejemplos tienen pruebas unitarias escritas con JUnit 5. Estas pruebas 
 | `Example2_RepeatedFunctionalityLoggerTest` | Delegación al servicio envuelto y mensajes de inicio y finalización de `process` y `validate`. |
 | `Example3_TightlyCoupledFacadeTest` | Compatibilidad de la API original y delegación de la fachada a vuelo, hotel y automóvil en el orden esperado. |
 | `Example4_SwitchStateTest` | Apertura, cierre, cambios automáticos de estado y transiciones inválidas. |
-| `Example5_TemplateMethodLikeTest` | Ejecución ordenada de los cuatro pasos de `prepare`. |
+| `Example5_TemplateMethodLikeTest` | Compatibilidad de `Beverage`, orden fijo de `prepare` y especialización de los pasos variables. |
 
-La suite contiene **13 casos de prueba** en total.
+La suite contiene **14 casos de prueba** en total.
 
 ### Ejecutar las pruebas
 
@@ -70,7 +76,7 @@ Desde la carpeta `PatronesDeDiseño`:
 gradle test
 ```
 
-El resultado esperado es una ejecución exitosa de los 13 casos, sin fallos ni errores.
+El resultado esperado es una ejecución exitosa de los 14 casos, sin fallos ni errores.
 
 ## Fase 2 - Estrategias de mantenimiento de software
 

@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 
 class Example5_TemplateMethodLikeTest {
 
-    private final Beverage beverage = new Beverage();
     private final PrintStream originalOutput = System.out;
     private ByteArrayOutputStream capturedOutput;
 
@@ -28,16 +27,46 @@ class Example5_TemplateMethodLikeTest {
     }
 
     @Test
-    void prepareExecutesStepsInOrder() {
+    void originalBeverageExecutesStepsInOrder() {
+        Beverage beverage = new Beverage();
+
         beverage.prepare();
 
-        String expected = String.join(
-                System.lineSeparator(),
+        assertEquals(expectedOutput(
                 "Boiling water",
                 "Brewing beverage",
                 "Pouring in cup",
-                "Adding extras") + System.lineSeparator();
+                "Adding extras"), output());
+    }
 
-        assertEquals(expected, capturedOutput.toString(StandardCharsets.UTF_8));
+    @Test
+    void templateAllowsSpecializingVariableSteps() {
+        BeverageTemplate tea = new BeverageTemplate() {
+            @Override
+            protected void brew() {
+                System.out.println("Steeping tea");
+            }
+
+            @Override
+            protected void addExtras() {
+                System.out.println("Adding lemon");
+            }
+        };
+
+        tea.prepare();
+
+        assertEquals(expectedOutput(
+                "Boiling water",
+                "Steeping tea",
+                "Pouring in cup",
+                "Adding lemon"), output());
+    }
+
+    private String output() {
+        return capturedOutput.toString(StandardCharsets.UTF_8);
+    }
+
+    private String expectedOutput(String... lines) {
+        return String.join(System.lineSeparator(), lines) + System.lineSeparator();
     }
 }

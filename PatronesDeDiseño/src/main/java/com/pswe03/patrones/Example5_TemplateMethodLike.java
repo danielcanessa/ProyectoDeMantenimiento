@@ -1,8 +1,7 @@
-
 package com.pswe03.patrones;
 
-class Beverage {
-    public void prepare() {
+abstract class BeverageTemplate {
+    public final void prepare() {
         boilWater();
         brew();
         pourInCup();
@@ -10,7 +9,22 @@ class Beverage {
     }
 
     private void boilWater() { System.out.println("Boiling water"); }
-    private void brew() { System.out.println("Brewing beverage"); }
+
+    protected abstract void brew();
+
     private void pourInCup() { System.out.println("Pouring in cup"); }
-    private void addExtras() { System.out.println("Adding extras"); }
+
+    protected abstract void addExtras();
+}
+
+class Beverage extends BeverageTemplate {
+    @Override
+    protected void brew() {
+        System.out.println("Brewing beverage");
+    }
+
+    @Override
+    protected void addExtras() {
+        System.out.println("Adding extras");
+    }
 }
