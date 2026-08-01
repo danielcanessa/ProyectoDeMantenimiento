@@ -1,14 +1,24 @@
-
 package com.pswe03.patrones;
 
 class TravelSystem {
+    private final Flight flight;
+    private final Hotel hotel;
+    private final CarRental carRental;
+
+    TravelSystem() {
+        this(new Flight(), new Hotel(), new CarRental());
+    }
+
+    TravelSystem(Flight flight, Hotel hotel, CarRental carRental) {
+        this.flight = flight;
+        this.hotel = hotel;
+        this.carRental = carRental;
+    }
+
     public void book() {
-        Flight flight = new Flight();
-        Hotel hotel = new Hotel();
-        CarRental car = new CarRental();
         flight.reserve();
         hotel.reserve();
-        car.reserve();
+        carRental.reserve();
     }
 }
 

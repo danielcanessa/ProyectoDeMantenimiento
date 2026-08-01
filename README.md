@@ -16,7 +16,7 @@ Refactorizar cinco archivos Java aplicando correctamente el patrón de diseño a
 | --- | --- | --- | --- |
 | `Example1_IfElseCalculator.java` | Strategy | Selección de operaciones mediante condicionales. | Aplicado: cada operación está encapsulada en una estrategia y las entradas inválidas producen una excepción explícita. |
 | `Example2_RepeatedFunctionalityLogger.java` | Decorator | Funcionalidad de registro repetida alrededor de operaciones. | Aplicado: el logging se agrega por composición sin mezclarlo con la lógica principal del servicio. |
-| `Example3_TightlyCoupledFacade.java` | Facade | Coordinación directa de varios subsistemas de viaje. | Pendiente de refactorización. |
+| `Example3_TightlyCoupledFacade.java` | Facade | Coordinación directa de varios subsistemas de viaje. | Aplicado: una fachada ofrece una operación única y oculta la coordinación de las reservas. |
 | `Example4_SwitchState.java` | State | Comportamiento condicionado por un estado textual. | Pendiente de refactorización. |
 | `Example5_TemplateMethodLike.java` | Template Method | Secuencia fija de pasos para preparar una bebida. | Pendiente de refactorización. |
 
@@ -34,6 +34,12 @@ Siguiendo el principio Boy Scout (dejar el código un poco mejor de como se enco
 
 La composición `new LoggingServiceDecorator(new BasicService())` permite activar el logging sin modificar `BasicService`. Además, el método `executeWithLogging` centraliza el comportamiento repetido y deja abierta la posibilidad de combinar el servicio con otros decoradores.
 
+### Ejemplo 3 - Facade
+
+`TravelSystem` actúa como fachada y conserva `book()` como una entrada única para reservar el vuelo, el hotel y el automóvil. El cliente no necesita conocer los subsistemas ni el orden en que deben ejecutarse; esa coordinación queda encapsulada en la fachada.
+
+El constructor sin argumentos conserva la API original `new TravelSystem().book()`. Un segundo constructor permite recibir los subsistemas desde fuera, lo que reduce el acoplamiento y facilita verificar la coordinación de manera aislada sin obligar a modificar las referencias existentes.
+
 ## Pruebas unitarias de la Fase 1
 
 Los cinco ejemplos tienen pruebas unitarias escritas con JUnit 5. Estas pruebas documentan el comportamiento esperado y protegen cada refactorización contra regresiones.
@@ -44,11 +50,11 @@ Los cinco ejemplos tienen pruebas unitarias escritas con JUnit 5. Estas pruebas 
 | --- | --- |
 | `Example1_IfElseCalculatorTest` | Suma, resta, multiplicación, división y rechazo mediante `IllegalArgumentException` de operaciones desconocidas o nulas. |
 | `Example2_RepeatedFunctionalityLoggerTest` | Delegación al servicio envuelto y mensajes de inicio y finalización de `process` y `validate`. |
-| `Example3_TightlyCoupledFacadeTest` | Reserva de vuelo, hotel y automóvil en el orden esperado. |
+| `Example3_TightlyCoupledFacadeTest` | Compatibilidad de la API original y delegación de la fachada a vuelo, hotel y automóvil en el orden esperado. |
 | `Example4_SwitchStateTest` | Apertura en estado `CLOSED`, cierre en estado `OPEN` y transiciones inválidas. |
 | `Example5_TemplateMethodLikeTest` | Ejecución ordenada de los cuatro pasos de `prepare`. |
 
-La suite contiene **12 casos de prueba** en total.
+La suite contiene **13 casos de prueba** en total.
 
 ### Ejecutar las pruebas
 
@@ -58,7 +64,7 @@ Desde la carpeta `PatronesDeDiseño`:
 gradle test
 ```
 
-El resultado esperado es una ejecución exitosa de los 12 casos, sin fallos ni errores.
+El resultado esperado es una ejecución exitosa de los 13 casos, sin fallos ni errores.
 
 ## Fase 2 - Estrategias de mantenimiento de software
 
